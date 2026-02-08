@@ -158,6 +158,7 @@ class AnimatedBarCard extends HTMLElement {
       direction: config.direction || 'horizontal',
       bar_height: config.bar_height ?? 20,
       bar_spacing: config.bar_spacing ?? 12,
+      bar_length: config.bar_length ?? 100,
       decimals: config.decimals ?? 0,
       unit: config.unit || '',
       severity: parseSeverity(config.severity) || DEFAULT_SEVERITY,
@@ -260,16 +261,9 @@ class AnimatedBarCard extends HTMLElement {
         if (cfg.show_value) {
           html += `<div class="bar-value" style="color:${color}">${displayVal}<span class="bar-unit">${unit}</span></div>`;
         }
-        html += `<div class="bar-track" style="height: 120px;">`;
+        html += `<div class="bar-track">`;
         if (available && pct > 0) {
-          const gradientId = `bar-grad-${idx}`;
-          html += `<svg style="position: absolute; width: 0; height: 0;"><defs>
-            <linearGradient id="${gradientId}" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stop-color="${color}" stop-opacity="0.5"/>
-              <stop offset="100%" stop-color="${color}" stop-opacity="1"/>
-            </linearGradient>
-          </defs></svg>`;
-          html += `<div class="bar-fill vertical" style="height: ${pct}%; background: url(#${gradientId}); background: linear-gradient(to top, ${color}80, ${color});">
+          html += `<div class="bar-fill vertical" style="height: ${pct}%; background: linear-gradient(to top, ${color}80, ${color});">
             <div class="bar-glow" style="background: ${color};"></div>
           </div>`;
         }
@@ -298,13 +292,6 @@ class AnimatedBarCard extends HTMLElement {
         }
         html += `<div class="bar-track" style="height: ${cfg.bar_height}px;">`;
         if (available && pct > 0) {
-          const gradientId = `bar-grad-${idx}`;
-          html += `<svg style="position: absolute; width: 0; height: 0;"><defs>
-            <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="${color}" stop-opacity="0.5"/>
-              <stop offset="100%" stop-color="${color}" stop-opacity="1"/>
-            </linearGradient>
-          </defs></svg>`;
           html += `<div class="bar-fill horizontal" style="width: ${pct}%; background: linear-gradient(to right, ${color}80, ${color});">
             <div class="bar-glow" style="background: ${color};"></div>
           </div>`;
@@ -357,8 +344,9 @@ class AnimatedBarCard extends HTMLElement {
       .bars-container.horizontal { display: flex; flex-direction: column; gap: ${this._config.bar_spacing ?? 12}px; }
       .bars-container.vertical {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
         gap: ${this._config.bar_spacing ?? 12}px;
+        align-items: flex-end;
       }
       .bar-item.horizontal {
         display: grid;
@@ -371,6 +359,8 @@ class AnimatedBarCard extends HTMLElement {
         flex-direction: column;
         align-items: center;
         gap: 8px;
+        flex: 1;
+        min-height: ${this._config.bar_length ?? 100}px;
       }
       .bar-label {
         display: flex;
@@ -389,6 +379,8 @@ class AnimatedBarCard extends HTMLElement {
       }
       .bar-item.vertical .bar-track {
         width: ${this._config.bar_height ?? 20}px;
+        flex: 1;
+        min-height: ${this._config.bar_length ?? 100}px;
       }
       .bar-fill {
         position: absolute;
