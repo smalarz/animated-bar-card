@@ -17,6 +17,7 @@ const LOCALES = {
       unit: 'Unit', decimals: 'Decimals', direction: 'Direction',
       direction_horizontal: 'Horizontal', direction_vertical: 'Vertical',
       bar_height: 'Bar height (px)', bar_spacing: 'Bar spacing (px)',
+      bar_length: 'Bar length (px, vertical)',
       show_value: 'Show value', show_name: 'Show name', show_icon: 'Show icon',
       show_header: 'Show header', severity: 'Severity thresholds',
       add_entity: '+ Add entity', color: 'Color', label: 'Label',
@@ -30,6 +31,7 @@ const LOCALES = {
       unit: 'Jednostka', decimals: 'Miejsca dziesiętne', direction: 'Kierunek',
       direction_horizontal: 'Poziomo', direction_vertical: 'Pionowo',
       bar_height: 'Wysokość paska (px)', bar_spacing: 'Odstęp (px)',
+      bar_length: 'Długość paska (px, pionowo)',
       show_value: 'Pokaż wartość', show_name: 'Pokaż nazwę', show_icon: 'Pokaż ikonę',
       show_header: 'Pokaż nagłówek', severity: 'Progi kolorów',
       add_entity: '+ Dodaj encję', color: 'Kolor', label: 'Etykieta',
@@ -43,6 +45,7 @@ const LOCALES = {
       unit: 'Einheit', decimals: 'Dezimalstellen', direction: 'Richtung',
       direction_horizontal: 'Horizontal', direction_vertical: 'Vertikal',
       bar_height: 'Balkenhöhe (px)', bar_spacing: 'Abstand (px)',
+      bar_length: 'Balkenlänge (px, vertikal)',
       show_value: 'Wert anzeigen', show_name: 'Name anzeigen', show_icon: 'Symbol anzeigen',
       show_header: 'Kopfzeile anzeigen', severity: 'Schwellenwerte',
       add_entity: '+ Entität hinzufügen', color: 'Farbe', label: 'Beschriftung',
@@ -576,7 +579,11 @@ class AnimatedBarCardEditor extends HTMLElement {
         </div>
         <div class="inline">
           <div class="row"><label>${e.bar_spacing}</label><input id="bar_spacing" type="number" min="0" max="30" value="${c.bar_spacing ?? 12}"></div>
+          <div class="row"><label>${e.bar_length}</label><input id="bar_length" type="number" min="50" max="300" value="${c.bar_length ?? 100}"></div>
+        </div>
+        <div class="inline">
           <div class="row"><label>${e.animation_duration}</label><input id="animation_duration" type="number" min="0" max="3000" step="100" value="${c.animation_duration ?? 800}"></div>
+          <div class="row"><label>${e.columns}</label><input id="columns" value="${c.columns || 'auto'}"></div>
         </div>
         <div class="toggle-row"><label>${e.show_value}</label><input type="checkbox" id="show_value" ${c.show_value !== false ? 'checked' : ''}></div>
         <div class="toggle-row"><label>${e.show_name}</label><input type="checkbox" id="show_name" ${c.show_name !== false ? 'checked' : ''}></div>
@@ -601,9 +608,17 @@ class AnimatedBarCardEditor extends HTMLElement {
       else delete this._config.unit;
       this._fireChanged();
     });
+    this.shadowRoot.getElementById('columns')?.addEventListener('change', (ev) => {
+      if (ev.target.value && ev.target.value !== 'auto') {
+        this._config.columns = ev.target.value;
+      } else {
+        this._config.columns = 'auto';
+      }
+      this._fireChanged();
+    });
 
     // Number inputs
-    ['min', 'max', 'decimals', 'bar_height', 'bar_spacing', 'animation_duration'].forEach(id => {
+    ['min', 'max', 'decimals', 'bar_height', 'bar_spacing', 'bar_length', 'animation_duration'].forEach(id => {
       this.shadowRoot.getElementById(id)?.addEventListener('change', (ev) => {
         this._config[id] = parseFloat(ev.target.value);
         this._fireChanged();
