@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Bar Card - Screenshots Preview</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .card-wrapper {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    /* Mock Home Assistant Card Styles */
+    .ha-card {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      color: #e2e8f0;
+    }
+
+    .bar-card {
+      padding: 16px;
+    }
+
+    .card-header {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #f1f5f9;
+    }
+
+    .bars-container.horizontal {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .bars-container.vertical {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .bar-item.horizontal {
+      display: grid;
+      grid-template-columns: minmax(100px, 0.3fr) 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .bar-item.vertical {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar-label {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .bar-label-icon {
+      width: 16px;
+      height: 16px;
+      margin-right: 4px;
+      opacity: 0.7;
+    }
+
+    .bar-track {
+      position: relative;
+      background: rgba(148, 163, 184, 0.12);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .bar-item.horizontal .bar-track {
+      height: 20px;
+    }
+
+    .bar-item.vertical .bar-track {
+      width: 20px;
+      height: 120px;
+    }
+
+    .bar-fill {
+      position: absolute;
+      border-radius: 6px;
+    }
+
+    .bar-fill.horizontal {
+      height: 100%;
+      left: 0;
+      top: 0;
+    }
+
+    .bar-fill.vertical {
+      width: 100%;
+      bottom: 0;
+      left: 0;
+    }
+
+    .bar-glow {
+      position: absolute;
+      opacity: 0.12;
+      border-radius: 50%;
+    }
+
+    .bar-fill.horizontal .bar-glow {
+      right: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+    }
+
+    .bar-fill.vertical .bar-glow {
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+    }
+
+    .bar-value {
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+
+    .bar-item.vertical .bar-value {
+      text-align: center;
+    }
+
+    .bar-unit {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-left: 2px;
+      font-weight: 400;
+    }
+
+    /* Animations */
+    @keyframes fillBar {
+      from {
+        width: 0;
+      }
+    }
+
+    @keyframes fillBarVertical {
+      from {
+        height: 0;
+      }
+    }
+
+    .bar-fill.horizontal {
+      animation: fillBar 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-fill.vertical {
+      animation: fillBarVertical 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Instructions */
+    .instructions {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 30px;
+      color: white;
+      text-align: center;
+    }
+
+    .instructions p {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .instructions code {
+      background: rgba(0,0,0,0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Animated Bar Card Preview</h1>
+
+    <div class="grid">
+      <!-- Horizontal Layout - System Resources -->
+      <div class="card-wrapper">
+        <div class="card-title">Horizontal Layout - System Resources</div>
+        <div class="ha-card">
+          <div class="bar-card">
+            <div class="card-header">System Resources</div>
+            <div class="bars-container horizontal">
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">💻</span>
+                  <span>CPU</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 45%; background: linear-gradient(to right, #4caf5080, #4caf50);">
+                    <div class="bar-glow" style="background: #4caf50;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #4caf50;">45<span class="bar-unit">%</span></div>
+              </div>
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">🧠</span>
+                  <span>Memory</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 72%; background: linear-gradient(to right, #ff980080, #ff9800);">
+                    <div class="bar-glow" style="background: #ff9800;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #ff9800;">72<span class="bar-unit">%</span></div>
+              </div>
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">💾</span>
+                  <span>Disk</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 88%; background: linear-gradient(to right, #f4433680, #f44336);">
+                    <div class="bar-glow" style="background: #f44336;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #f44336;">88<span class="bar-unit">%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vertical Layout - Energy Production -->
+      <div class="card-wrapper">
+        <div class="card-title">Vertical Layout - Energy Production</div>
+        <div class="ha-card">
+          <div class="bar-card">
+            <div class="card-header">Energy Production</div>
+            <div class="bars-container vertical">
+              <div class="bar-item vertical">
+                <div class="bar-value" style="color: #fbbf24;">3.2<span class="bar-unit">kW</span></div>
+                <div class="bar-track">
+                  <div class="bar-fill vertical" style="height: 64%; background: linear-gradient(to top, #fbbf2480, #fbbf24);">
+                    <div class="bar-glow" style="background: #fbbf24;"></div>
+                  </div>
+                </div>
+                <div class="bar-label">
+                  <span class="bar-label-icon">☀️</span>
+                  <span>Solar</span>
+                </div>
+              </div>
+              <div class="bar-item vertical">
+                <div class="bar-value" style="color: #06b6d4;">1.8<span class="bar-unit">kW</span></div>
+                <div class="bar-track">
+                  <div class="bar-fill vertical" style="height: 36%; background: linear-gradient(to top, #06b6d480, #06b6d4);">
+                    <div class="bar-glow" style="background: #06b6d4;"></div>
+                  </div>
+                </div>
+                <div class="bar-label">
+                  <span class="bar-label-icon">💨</span>
+                  <span>Wind</span>
+                </div>
+              </div>
+              <div class="bar-item vertical">
+                <div class="bar-value" style="color: #8b5cf6;">0.5<span class="bar-unit">kW</span></div>
+                <div class="bar-track">
+                  <div class="bar-fill vertical" style="height: 10%; background: linear-gradient(to top, #8b5cf680, #8b5cf6);">
+                    <div class="bar-glow" style="background: #8b5cf6;"></div>
+                  </div>
+                </div>
+                <div class="bar-label">
+                  <span class="bar-label-icon">⚡</span>
+                  <span>Grid</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Severity Colors - Temperature -->
+      <div class="card-wrapper">
+        <div class="card-title">Severity Colors - Room Temperatures</div>
+        <div class="ha-card">
+          <div class="bar-card">
+            <div class="card-header">Room Temperatures</div>
+            <div class="bars-container horizontal">
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">🛋️</span>
+                  <span>Living Room</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 53%; background: linear-gradient(to right, #4caf5080, #4caf50);">
+                    <div class="bar-glow" style="background: #4caf50;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #4caf50;">21.2<span class="bar-unit">°C</span></div>
+              </div>
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">🛏️</span>
+                  <span>Bedroom</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 40%; background: linear-gradient(to right, #4caf5080, #4caf50);">
+                    <div class="bar-glow" style="background: #4caf50;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #4caf50;">19.0<span class="bar-unit">°C</span></div>
+              </div>
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">🍳</span>
+                  <span>Kitchen</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 80%; background: linear-gradient(to right, #f4433680, #f44336);">
+                    <div class="bar-glow" style="background: #f44336;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #f44336;">27.0<span class="bar-unit">°C</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Battery Levels -->
+      <div class="card-wrapper">
+        <div class="card-title">Battery Levels</div>
+        <div class="ha-card">
+          <div class="bar-card">
+            <div class="card-header">Device Batteries</div>
+            <div class="bars-container horizontal">
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">📱</span>
+                  <span>Phone</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 85%; background: linear-gradient(to right, #4caf5080, #4caf50);">
+                    <div class="bar-glow" style="background: #4caf50;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #4caf50;">85<span class="bar-unit">%</span></div>
+              </div>
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">⌚</span>
+                  <span>Watch</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 42%; background: linear-gradient(to right, #ff980080, #ff9800);">
+                    <div class="bar-glow" style="background: #ff9800;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #ff9800;">42<span class="bar-unit">%</span></div>
+              </div>
+              <div class="bar-item horizontal">
+                <div class="bar-label">
+                  <span class="bar-label-icon">💻</span>
+                  <span>Laptop</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill horizontal" style="width: 15%; background: linear-gradient(to right, #f4433680, #f44336);">
+                    <div class="bar-glow" style="background: #f44336;"></div>
+                  </div>
+                </div>
+                <div class="bar-value" style="color: #f44336;">15<span class="bar-unit">%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <p><strong>📸 Taking Screenshots</strong></p>
+      <p>To capture screenshots for the repository:</p>
+      <p>1. Open this file in a browser at full resolution</p>
+      <p>2. Use browser developer tools or a screenshot tool</p>
+      <p>3. Capture individual cards and save as:</p>
+      <p><code>screenshot-horizontal.png</code> <code>screenshot-vertical.png</code> <code>screenshot-severity.png</code></p>
+      <p>4. Save screenshots to the <code>screenshots/</code> directory</p>
+    </div>
+  </div>
+</body>
+</html>
